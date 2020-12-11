@@ -1,7 +1,7 @@
 # Predicting sleep state from wearable data
 
 <b>Python 3.6</b> is used for this implementation beacuse of its easy way to work with data.<br />
-Packages: <b>pandas</b>, <b>numpy</b>, <b>sklearn</b>, <b>xgboost</b>, <b>torch</b>, <b>seaborn</b>
+Packages: <b>pandas</b>, <b>numpy</b>, <b>sklearn</b>, <b>xgboost</b>, <b>seaborn</b>
 
 In order to run program sucessfully, firstly create a separated env, for example:<br />
 <b>conda create -n sleep_classifier python=3.6</b> <br />
@@ -19,5 +19,5 @@ and run the folowing command:<br />
 Additional comments can be found in the code.</br>
 
 TO DO:
-- implement batch normalization on dataset for neural network
+- implement n-fold cross-validation
 - add additional metrics for evaluating performances of the models
