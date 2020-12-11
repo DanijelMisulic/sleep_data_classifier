@@ -11,6 +11,10 @@ import matplotlib.pyplot as plt
 
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import ExtraTreesClassifier
+from sklearn.feature_selection import SelectFromModel
 from sklearn.metrics import accuracy_score
 import xgboost as xgb
 
@@ -38,10 +42,10 @@ def get_to_know_data(data):
     
     
 def data_visualizations(data):
-    #visualize_class_distribution(data)
-    #visualize_skewness(data)
-    #boxplot_visualizations(data)
-    #heatmap_visualizations(data)
+    visualize_class_distribution(data)
+    visualize_skewness(data)
+    boxplot_visualizations(data)
+    heatmap_visualizations(data)
     
     
 def visualize_class_distribution(data):
@@ -80,6 +84,20 @@ def prepare_data_for_modeling(data, X):
     return x_train, x_test, y_train, y_test
 
 
+def select_features(data):
+    #Split X and Y variables
+    Y = data['sleep_state']
+    X = data.drop(["sleep_state"], axis=1, inplace=False)
+    
+    ETC = ExtraTreesClassifier()
+    ETC = ETC.fit(X, Y)
+
+    model = SelectFromModel(ETC, prefit=True)
+    X = model.transform(X)
+    print (X.shape)
+    return X
+
+
 def fitting_model(model, x_train, x_test, y_train, y_test):
     model.fit(x_train, y_train)
     model_pred = model.predict(x_test)
@@ -93,23 +111,42 @@ def create_decision_tree_model(x_train, x_test, y_train, y_test):
     accuracy = fitting_model(dectree, x_train, x_test, y_train, y_test)
     print (accuracy)
     
+    
+def create_random_forest_model(x_train, x_test, y_train, y_test):    
+    randfor = RandomForestClassifier()
+    accuracy = fitting_model(randfor, x_train, x_test, y_train, y_test)
+    print (accuracy)
+    
 
 def create_XGBoost_model(x_train, x_test, y_train, y_test):
     xg_reg = xgb.XGBClassifier(objective ='reg:squarederror', colsample_bytree = 0.3, learning_rate = 0.1, max_depth = 5, alpha = 10, n_estimators = 10)
     accuracy = fitting_model(xg_reg, x_train, x_test, y_train, y_test)
     print (accuracy)
+    
+    
+def create_logistic_regresion_model(x_train, x_test, y_train, y_test):    
+    logreg = LogisticRegression(solver='liblinear', multi_class='ovr')
+    accuracy = fitting_model(logreg, x_train, x_test, y_train, y_test)
+    print (accuracy)
 
     
 if __name__ == "__main__":        
     data = pd.read_csv('/Users/danijelmisulic/Downloads/Task_DS_BEG_nightly_data (1).csv')
-    get_to_know_data(data)
-    data_visualizations(data)
+    data.drop(["Unnamed: 0", "app_frame_no", "time_stamp"], axis=1, inplace=True)
+    #get_to_know_data(data)
+    #data_visualizations(data)
     
-    all_features_X = data.drop(["sleep_state"], axis=1, inplace=False)
-    x_train, x_test, y_train, y_test = prepare_data_for_modeling(data, all_features_X)
-    #create_decision_tree_model(x_train, x_test, y_train, y_test)
+    #all_features_X = data.drop(["sleep_state"], axis=1, inplace=False)
+    #x_train, x_test, y_train, y_test = prepare_data_for_modeling(data, all_features_X)
+    
+    #returns activity_index, perfusion_index_green, perfusion_index_infrared, temp_amb, temp_skin
+    preselected_features_X = select_features(data)
+    x_train, x_test, y_train, y_test = prepare_data_for_modeling(data, preselected_features_X)
+    
+    create_decision_tree_model(x_train, x_test, y_train, y_test)
     create_XGBoost_model(x_train, x_test, y_train, y_test)
-
+    create_random_forest_model(x_train, x_test, y_train, y_test)
+    create_logistic_regresion_model(x_train, x_test, y_train, y_test)   
 
 
     
