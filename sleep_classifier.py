@@ -7,6 +7,7 @@ Created on Thu Dec 10 23:39:14 2020
 """
 import pandas as pd
 import numpy as np
+
 import seaborn as sns
 import matplotlib.pyplot as plt
 
@@ -96,7 +97,6 @@ def select_features(data):
 
     model = SelectFromModel(ETC, prefit=True)
     X = model.transform(X)
-    print (X.shape)
     return X
 
 
@@ -156,7 +156,7 @@ def create_KNN_model(x_train, x_test, y_train, y_test):
 
     
 if __name__ == "__main__":        
-    data = pd.read_csv('/Users/danijelmisulic/Downloads/Task_DS_BEG_nightly_data (1).csv')
+    data = pd.read_csv('Task_DS_BEG_nightly_data (1).csv')
     data.drop(["Unnamed: 0", "app_frame_no", "time_stamp"], axis=1, inplace=True)
     #get_to_know_data(data)
     #data_visualizations(data)
@@ -167,14 +167,13 @@ if __name__ == "__main__":
     #returns activity_index, perfusion_index_green, perfusion_index_infrared, temp_amb, temp_skin
     preselected_features_X = select_features(data)
     x_train, x_test, y_train, y_test = prepare_data_for_modeling(data, preselected_features_X)
-    print (y_test)
     
     create_decision_tree_model(x_train, x_test, y_train, y_test)
     create_XGBoost_model(x_train, x_test, y_train, y_test)
     create_random_forest_model(x_train, x_test, y_train, y_test)
     create_logistic_regresion_model(x_train, x_test, y_train, y_test)  
     create_KNN_model(x_train, x_test, y_train, y_test)
-
+    
 
     
     
