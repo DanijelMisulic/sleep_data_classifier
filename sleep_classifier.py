@@ -6,6 +6,7 @@ Created on Thu Dec 10 23:39:14 2020
 @author: danijelmisulic
 """
 import pandas as pd
+import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 
@@ -13,6 +14,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import ExtraTreesClassifier
 from sklearn.feature_selection import SelectFromModel
 from sklearn.metrics import accuracy_score
@@ -129,6 +131,29 @@ def create_logistic_regresion_model(x_train, x_test, y_train, y_test):
     accuracy = fitting_model(logreg, x_train, x_test, y_train, y_test)
     print (accuracy)
 
+
+def create_KNN_model(x_train, x_test, y_train, y_test):
+    #Setup arrays to store training and test accuracies
+    neighbors = np.arange(1,7)
+    train_accuracy = np.empty(len(neighbors))
+    test_accuracy = np.empty(len(neighbors))
+    
+    for i, k in enumerate(neighbors):
+        #Setup a classifier with k neighbors
+        knn = KNeighborsClassifier(n_neighbors=k)
+        
+        #Fit the model on training and testing data
+        knn.fit(x_train, y_train)
+        
+        #Compute accuracy on the training set
+        train_accuracy[i] = knn.score(x_train, y_train)
+        
+        #Compute accuracy on the test set
+        test_accuracy[i] = knn.score(x_test, y_test) 
+        
+    print (train_accuracy)
+    print (test_accuracy)
+
     
 if __name__ == "__main__":        
     data = pd.read_csv('/Users/danijelmisulic/Downloads/Task_DS_BEG_nightly_data (1).csv')
@@ -142,11 +167,13 @@ if __name__ == "__main__":
     #returns activity_index, perfusion_index_green, perfusion_index_infrared, temp_amb, temp_skin
     preselected_features_X = select_features(data)
     x_train, x_test, y_train, y_test = prepare_data_for_modeling(data, preselected_features_X)
+    print (y_test)
     
     create_decision_tree_model(x_train, x_test, y_train, y_test)
     create_XGBoost_model(x_train, x_test, y_train, y_test)
     create_random_forest_model(x_train, x_test, y_train, y_test)
-    create_logistic_regresion_model(x_train, x_test, y_train, y_test)   
+    create_logistic_regresion_model(x_train, x_test, y_train, y_test)  
+    create_KNN_model(x_train, x_test, y_train, y_test)
 
 
     
