@@ -36,7 +36,37 @@ def get_to_know_data(data):
     class_dist = data.groupby('sleep_state').size()
     print (class_dist)
     
+    
+def data_visualizations(data):
+    #visualize_class_distribution(data)
+    #visualize_skewness(data)
+    #boxplot_visualizations(data)
+    #heatmap_visualizations(data)
+    
+    
+def visualize_class_distribution(data):
+    class_dist=data.groupby('sleep_state').size()
+    class_label=pd.DataFrame(class_dist,columns=['Size'])
+    plt.figure(figsize=(8,6))
+    sns.barplot(x=class_label.index,y='Size',data=class_label)
 
+
+def visualize_skewness(data):
+    skew=data.skew()
+    skew_df=pd.DataFrame(skew,index=None,columns=['Skewness'])
+    plt.figure(figsize=(15,7))
+    sns.barplot(x=skew_df.index,y='Skewness',data=skew_df)
+    plt.xticks(rotation=90)
+    plt.show()
+    
+    
+def boxplot_visualizations(data):
+    
+    for i, col in enumerate(data.columns):
+        plt.figure(i,figsize=(8,4))
+        sns.boxplot(x=data['sleep_state'], y=col, data=data, palette="coolwarm")
+    
+ 
 def heatmap_visualizations(data):
     plt.figure(figsize=(15,8))
     sns.heatmap(data.corr(),cmap='magma',linecolor='white',linewidths=1,annot=True)
@@ -73,7 +103,7 @@ def create_XGBoost_model(x_train, x_test, y_train, y_test):
 if __name__ == "__main__":        
     data = pd.read_csv('/Users/danijelmisulic/Downloads/Task_DS_BEG_nightly_data (1).csv')
     get_to_know_data(data)
-    heatmap_visualizations(data)
+    data_visualizations(data)
     
     all_features_X = data.drop(["sleep_state"], axis=1, inplace=False)
     x_train, x_test, y_train, y_test = prepare_data_for_modeling(data, all_features_X)
